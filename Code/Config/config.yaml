@@ -1,0 +1,163 @@
+# =====================================================================
+# R-Sync v2 configuration (one file for both tasks)
+# run_name, task, seed, policy are set per run by node_ctl.py setcfg
+# =====================================================================
+run_name: "dry_run"
+task: "vehicle"              # "vehicle" (7 nodes) | "cifar10" (8 nodes)
+rounds: 100
+seed: 42                     # training randomness (shuffling, dropout, exploration)
+split_seed: 42               # vehicle train/val split, fixed across seeds
+init_seed: 1234              # identical initial weights on every node
+transfer_dtype: "float32"    # "float32" | "float16" (1/2 traffic) | "int8" (1/4 traffic, per-tensor scale)
+error_feedback: false        # true: add last round's compression error to this round's update (EF / CHOCO-style)
+early_stopping:              # validation-based; decision identical on all nodes (shared mean val loss)
+  enabled: false             # false: run all rounds but still log best model + where it WOULD stop
+  patience: 10
+  metric: "auto"             # auto: validation loss (regression) / validation accuracy (classification)
+checkpoint_node: 1           # this node saves the consensus model every checkpoint_every rounds
+checkpoint_every: 5
+central_node: 1              # policy "central" only: the node that receives all training data and trains alone
+
+tasks:
+  vehicle:
+    type: regression
+    node_ids: [1, 2, 3, 4, 5, 6, 7]
+    model: mlp
+    input_dim: 20
+    target: speed_kmh
+    val_split: 0.2
+    batch_size: 32
+    local_epochs: 3
+    optimizer: adam
+    lr: 0.001
+  cifar10:
+    type: classification
+    node_ids: [1, 2, 3, 4, 5, 6, 7, 8]
+    model: cnn
+    num_classes: 10
+    batch_size: 32
+    local_epochs: 1
+    optimizer: sgd
+    lr: 0.01
+    momentum: 0.9
+    weight_decay: 0.0
+
+policy:
+  name: "rl"                 # rl | full (BSP) | fixed | random | deadline | schedule | rule | rlint | rlint2
+                             # v8 baselines: fedprox | gossip (D-PSGD ring) | local (no communication) | central
+  fixed_fraction: 0.5        # used only by "fixed"
+  schedule: "1:1.0"          # used only by "schedule": "start:g,..." intensity g x deadline-rule shape
+  intensity_levels: [1.0, 0.5, 0.25]   # rule / rlint: allowed global intensities g (x deadline-rule shape)
+  rule_patience: 3           # rule: shared validation not improved for this many rounds -> one level less work
+  shape: "deadline"          # schedule/rule/rlint*: "deadline" = slow nodes do relatively less; "none" = ablation (same work for all)
+  prox_mu: 0.0               # fedprox only: proximal coefficient mu (loss + mu/2 ||w - x_t||^2)
+
+aggregation:
+  weighting: "sample"        # "sample" (q_k = n_k/n) | "equal" (q_k = 1/K); mixing is always equal (doubly stochastic)
+  normalization: "fednova"   # "fednova" (divide by local steps) | "none"
+
+agent:
+  actions: [0.25, 0.5, 0.75, 1.0]   # fraction of the full local work
+  lr: 0.1
+  gamma: 0.9
+  eps_start: 0.2
+  eps_end: 0.02
+  eps_decay_rounds: 50
+  # --- v3 intensity SARSA (policy rlint) ---
+  int_lr: 0.1
+  int_gamma: 0.9
+  int_eps: 0.0               # exploration for this run (training episodes decrease it; evaluation = 0)
+  int_learn: false           # true in training episodes, false for frozen evaluation
+  int_q_load: ""             # Q-table to start from (previous episode); "" = zeros
+  int_q_save: ""             # where to store the Q-table after a training episode
+  # --- v5 proposed controller (policy rlint2) ---
+  int2_lr0: 0.5              # per-(state,action) learning rate lr0/sqrt(1+visits), floored at int2_lr_min
+  int2_lr_min: 0.02
+  int2_gamma: 0.98
+  int2_c: 0.01               # reward = rel. gain of best-so-far validation - int2_c * (round time / round-2 time)
+
+reward:                      # r = w_contrib*rel_improvement - w_over*max(0,ratio-1) - w_idle*idle/budget
+  w_contrib: 1.0
+  w_over: 1.0
+  w_idle: 0.5
+
+network:
+  http_timeout: 60
+  retries: 3
+  startup_timeout: 300
+  round_timeout: 600
+  collect_timeout: 3600      # one-off transfers: training data (central), best models to the checkpoint node
+
+# HASS-DFL device mapping (G = 192.168.0.4, H = 192.168.0.5)
+peers:
+  1:
+    name: Node_A
+    ip: 192.168.0.2
+    port: 9000
+    hardware: raspberry_pi_5
+    device: {vehicle: cpu, cifar10: cpu}
+    dataset_path:
+      vehicle: /home/ubuntu/distributed_avg/RSync_v2_Node_A/client_1.csv
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_A/dataset_cifer
+  2:
+    name: Node_B
+    ip: 192.168.0.3
+    port: 9000
+    hardware: raspberry_pi_5
+    device: {vehicle: cpu, cifar10: cpu}
+    dataset_path:
+      vehicle: /home/ubuntu/distributed_avg/RSync_v2_Node_B/client_2.csv
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_B/dataset_cifer
+  3:
+    name: Node_C
+    ip: 192.168.0.12
+    port: 9000
+    hardware: jetson_orin_nano_super
+    device: {vehicle: cpu, cifar10: cuda}
+    dataset_path:
+      vehicle: /home/node_c_jatson_1/distributed_avg/RSync_v2_Node_C/client_3.csv
+      cifar10: /home/node_c_jatson_1/distributed_avg/D_Clique_Node_C/dataset_cifer
+  4:
+    name: Node_D
+    ip: 192.168.0.13
+    port: 9000
+    hardware: jetson_orin_nano_super
+    device: {vehicle: cpu, cifar10: cuda}
+    dataset_path:
+      vehicle: /home/node-d/distributed_avg/RSync_v2_Node_D/client_4.csv
+      cifar10: /home/node-d/distributed_avg/D_Clique_Node_D/dataset_cifer
+  5:
+    name: Node_E
+    ip: 192.168.0.30
+    port: 9000
+    hardware: jetson_orin_nano_super
+    device: {vehicle: cpu, cifar10: cuda}
+    dataset_path:
+      vehicle: /home/ubuntu/distributed_avg/RSync_v2_Node_E/client_5.csv
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_E/dataset_cifer
+  6:
+    name: Node_F
+    ip: 192.168.0.29
+    port: 9000
+    hardware: jetson_orin_nano_super
+    device: {vehicle: cpu, cifar10: cuda}
+    dataset_path:
+      vehicle: /home/ubuntu/distributed_avg/RSync_v2_Node_F/client_6.csv
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_F/dataset_cifer
+  7:
+    name: Node_G
+    ip: 192.168.0.4
+    port: 9000
+    hardware: raspberry_pi_5
+    device: {vehicle: cpu, cifar10: cpu}
+    dataset_path:
+      vehicle: /home/ubuntu/distributed_avg/RSync_v2_Node_G/client_7.csv
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_G/dataset_cifer
+  8:
+    name: Node_H
+    ip: 192.168.0.5
+    port: 9000
+    hardware: raspberry_pi_5
+    device: {vehicle: cpu, cifar10: cpu}
+    dataset_path:
+      cifar10: /home/ubuntu/distributed_avg/D_Clique_Node_H/dataset_cifer
