@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "num_clients": 8,
+  "num_cliques": 2,
+  "clique_size": 4,
+  "global_val_size": 5000,
+  "local_val_fraction": 0.1,
+  "partition_method": "THROUGHPUT_WEIGHTED_DIRICHLET",
+  "dirichlet_alpha": 0.3,
+  "throughput_profile_path": "throughput_profile.json",
+  "device_map_path": "device_map.json",
+  "hardware_data_dir": "./dataset_hardware_cifar10"
+}

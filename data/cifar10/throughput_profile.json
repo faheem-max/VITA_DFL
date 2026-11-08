@@ -1,0 +1,113 @@
+{
+  "client_id_scheme": "physical IDs 1..8",
+  "num_physical_clients": 8,
+  "allocation_rule": "Client sample capacity proportional to measured median training throughput.",
+  "throughput_metric": "median_samples_per_sec",
+  "preview_client_pool_size": 55000,
+  "clients": {
+    "1": {
+      "physical_client_id": 1,
+      "device_name": "rpi5_1",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 1,
+      "throughput_samples_per_sec": 1005.5642676363643,
+      "runtime_device_type": "cpu",
+      "cuda_device_name": null,
+      "source_calibration_file": "client_1.json",
+      "speed_ratio_vs_slowest": 1.0,
+      "preview_raw_capacity": 2792.0068254922103,
+      "preview_integer_capacity": 2792
+    },
+    "2": {
+      "physical_client_id": 2,
+      "device_name": "rpi5_2",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 1,
+      "throughput_samples_per_sec": 1372.7057368443693,
+      "runtime_device_type": "cpu",
+      "cuda_device_name": null,
+      "source_calibration_file": "client_2.json",
+      "speed_ratio_vs_slowest": 1.365109900007676,
+      "preview_raw_capacity": 3811.39615836842,
+      "preview_integer_capacity": 3811
+    },
+    "3": {
+      "physical_client_id": 3,
+      "device_name": "jetson_orin_1",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 1,
+      "throughput_samples_per_sec": 5160.110276308429,
+      "runtime_device_type": "cuda",
+      "cuda_device_name": "Orin",
+      "source_calibration_file": "client_3.json",
+      "speed_ratio_vs_slowest": 5.131556920213126,
+      "preview_raw_capacity": 14327.341946636832,
+      "preview_integer_capacity": 14327
+    },
+    "4": {
+      "physical_client_id": 4,
+      "device_name": "jetson_orin_2",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 1,
+      "throughput_samples_per_sec": 3132.0193816140245,
+      "runtime_device_type": "cuda",
+      "cuda_device_name": "Orin",
+      "source_calibration_file": "client_4.json",
+      "speed_ratio_vs_slowest": 3.1146884216321777,
+      "preview_raw_capacity": 8696.2313324786,
+      "preview_integer_capacity": 8696
+    },
+    "5": {
+      "physical_client_id": 5,
+      "device_name": "jetson_orin_3",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 2,
+      "throughput_samples_per_sec": 3054.7285328017715,
+      "runtime_device_type": "cuda",
+      "cuda_device_name": "Orin",
+      "source_calibration_file": "client_5.json",
+      "speed_ratio_vs_slowest": 3.0378252600224984,
+      "preview_raw_capacity": 8481.628860635465,
+      "preview_integer_capacity": 8482
+    },
+    "6": {
+      "physical_client_id": 6,
+      "device_name": "jetson_orin_4",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 2,
+      "throughput_samples_per_sec": 3295.9998769450185,
+      "runtime_device_type": "cuda",
+      "cuda_device_name": "Orin",
+      "source_calibration_file": "client_6.json",
+      "speed_ratio_vs_slowest": 3.277761534518776,
+      "preview_raw_capacity": 9151.532576712243,
+      "preview_integer_capacity": 9152
+    },
+    "7": {
+      "physical_client_id": 7,
+      "device_name": "rpi5_3",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 2,
+      "throughput_samples_per_sec": 1381.435889516464,
+      "runtime_device_type": "cpu",
+      "cuda_device_name": null,
+      "source_calibration_file": "client_7.json",
+      "speed_ratio_vs_slowest": 1.3737917445730317,
+      "preview_raw_capacity": 3835.6359276527555,
+      "preview_integer_capacity": 3836
+    },
+    "8": {
+      "physical_client_id": 8,
+      "device_name": "rpi5_4",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 2,
+      "throughput_samples_per_sec": 1406.139303322893,
+      "runtime_device_type": "cpu",
+      "cuda_device_name": null,
+      "source_calibration_file": "client_8.json",
+      "speed_ratio_vs_slowest": 1.3983584625854923,
+      "preview_raw_capacity": 3904.2263720234882,
+      "preview_integer_capacity": 3904
+    }
+  }
+}

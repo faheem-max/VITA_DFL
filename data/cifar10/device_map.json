@@ -1,0 +1,60 @@
+{
+  "clients": {
+    "1": {
+      "device_name": "ubuntu",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 1,
+      "ip": "192.168.0.2",
+      "port": 5001
+    },
+    "2": {
+      "device_name": "ubuntu",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 1,
+      "ip": "192.168.0.3",
+      "port": 5002
+    },
+    "3": {
+      "device_name": "node_c_jatson_1",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 1,
+      "ip": "192.168.0.12",
+      "port": 5003
+    },
+    "4": {
+      "device_name": "node-d",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 1,
+      "ip": "192.168.0.13",
+      "port": 5004
+    },
+    "5": {
+      "device_name": "ubuntu",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 2,
+      "ip": "192.168.0.30",
+      "port": 5005
+    },
+    "6": {
+      "device_name": "node-f",
+      "hardware_type": "NVIDIA Jetson Orin",
+      "clique_id": 2,
+      "ip": "192.168.0.31",
+      "port": 5006
+    },
+    "7": {
+      "device_name": "ubuntu",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 2,
+      "ip": "192.168.0.4",
+      "port": 5007
+    },
+    "8": {
+      "device_name": "ubuntu",
+      "hardware_type": "Raspberry Pi 5",
+      "clique_id": 2,
+      "ip": "192.168.0.5",
+      "port": 5008
+    }
+  }
+}
